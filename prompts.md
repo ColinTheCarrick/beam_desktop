@@ -27,3 +27,9 @@
 - Asked: Run the validation cases in `spec.md` against the app's beam calculations and report expected versus actual values.
 - Changed: No application code changed. Ran the 20 ft uniform-load reference and selected 20 ft simply supported midpoint point-load, cantilever uniform-load, and cantilever tip point-load cases, checking reactions, equilibrium, peaks, and intermediate diagram values against closed-form calculations.
 - Worked: The reference and checked diagram values matched within numerical integration error. The cantilever fixed-end moment is stored and displayed as -200 kip-ft, the internal moment; the counterclockwise reaction needed for equilibrium is +200 kip-ft, so the displayed reaction moment has the wrong sign. Equilibrium passed when the stored internal moment was negated.
+
+## Request
+
+- Asked: Adjust the desktop app frame to fit within the screen.
+- Changed: Sized and centered the window within the desktop work area, including window borders and the taskbar. Added tabs for inputs and results at narrow widths, retained scrollable panels, and ignored generated Python bytecode.
+- Worked: Yes. Checked actual Windows window bounds against the work area, compact and wide layouts, tab switching, scrolling at minimum size, and theme changes. Long content remains scrollable.

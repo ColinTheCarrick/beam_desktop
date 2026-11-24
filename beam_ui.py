@@ -15,9 +15,7 @@ class BeamUI(tk.Tk):
         self.calculate, self.sections, self.themes = calculate, sections, themes
         self.title("Beam Designer — Prototype")
         self.ui_scale = max(1, float(self.tk.call("tk", "scaling"))/(96/72))
-        self.geometry(f"{min(self.winfo_screenwidth()-80, int(1320*self.ui_scale))}x{min(self.winfo_screenheight()-120, int(940*self.ui_scale))}")
-        self.minsize(min(self.winfo_screenwidth()-80, int(980*self.ui_scale)),
-                     min(self.winfo_screenheight()-120, int(700*self.ui_scale)))
+        self.fit_screen()
         self.style = ttk.Style(self)
         # Native Windows themes ignore several widget color settings.
         self.style.theme_use("clam")
@@ -32,6 +30,30 @@ class BeamUI(tk.Tk):
         self.build()
         self.add_load("uniform", [1, 0, 20])
         self.theme_changed()
+
+    def fit_screen(self):
+        """Fit the client area and window borders inside the desktop work area."""
+        import sys
+        left, top, right, bottom = 0, 0, self.winfo_screenwidth(), self.winfo_screenheight()
+        border, title = int(8*self.ui_scale), int(38*self.ui_scale)
+        if sys.platform == "win32":
+            import ctypes
+            from ctypes import wintypes
+            rect = wintypes.RECT()
+            user32 = ctypes.windll.user32
+            if user32.SystemParametersInfoW(0x0030, 0, ctypes.byref(rect), 0):
+                left, top, right, bottom = rect.left, rect.top, rect.right, rect.bottom
+            border = user32.GetSystemMetrics(32) + user32.GetSystemMetrics(92)
+            title = user32.GetSystemMetrics(4) + border
+        available_width = max(1, right-left-2*border)
+        available_height = max(1, bottom-top-title-border)
+        width = min(available_width, int(1320*self.ui_scale))
+        height = min(available_height, int(940*self.ui_scale))
+        self.minsize(min(available_width, int(600*self.ui_scale)),
+                     min(available_height, int(450*self.ui_scale)))
+        x = max(left, left+(right-left-width-2*border)//2)
+        y = max(top, top+(bottom-top-height-title-border)//2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
     def build(self):
         header = ttk.Frame(self, padding=(24, 18, 24, 12))
@@ -53,10 +75,15 @@ class BeamUI(tk.Tk):
             text="NOT FOR REAL DESIGN OR CONSTRUCTION\nSynthetic section properties are unsuitable for real design. These preliminary screens do not check code compliance, buckling, shear capacity, bearing, or load combinations.")
         self.warning.pack(fill="x", padx=24, pady=(0, 14))
         self.warning.bind("<Configure>", lambda e: self.warning.configure(wraplength=max(100, e.width-30)))
-        body = ttk.Panedwindow(self, orient="horizontal")
+        body = ttk.Frame(self)
         body.pack(fill="both", expand=True, padx=24)
-        self.formcanvas, self.form = self.scroll_panel(body, 350)
-        self.resultcanvas, self.results = self.scroll_panel(body, 800)
+        self.body = body
+        self.panes = ttk.Panedwindow(body, orient="horizontal")
+        self.tabs = ttk.Notebook(body)
+        self.form_panel, self.formcanvas, self.form = self.scroll_panel(body, 350)
+        self.result_panel, self.resultcanvas, self.results = self.scroll_panel(body, 800)
+        self.layout_mode = None
+        body.bind("<Configure>", self.layout_body)
         self.build_form()
         self.build_results()
         self.results.bind("<Configure>", self.resize_results, add="+")
@@ -66,7 +93,6 @@ class BeamUI(tk.Tk):
 
     def scroll_panel(self, body, width):
         panel = ttk.Frame(body, style="Card.TFrame")
-        body.add(panel, weight=0 if width == 350 else 1)
         canvas = tk.Canvas(panel, width=int(width*self.ui_scale), highlightthickness=0)
         bar = ttk.Scrollbar(panel, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=bar.set)
@@ -76,7 +102,31 @@ class BeamUI(tk.Tk):
         window = canvas.create_window((0, 0), window=content, anchor="nw")
         content.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         canvas.bind("<Configure>", lambda e: canvas.itemconfigure(window, width=e.width))
-        return canvas, content
+        return panel, canvas, content
+
+    def layout_body(self, event):
+        # Tabs give both panels the full width on compact desktop windows.
+        mode = "tabs" if event.width < 950*self.ui_scale else "panes"
+        if mode == self.layout_mode:
+            return
+        if self.layout_mode == "panes":
+            self.panes.forget(self.form_panel)
+            self.panes.forget(self.result_panel)
+            self.panes.pack_forget()
+        elif self.layout_mode == "tabs":
+            self.tabs.forget(self.form_panel)
+            self.tabs.forget(self.result_panel)
+            self.tabs.pack_forget()
+        if mode == "panes":
+            self.panes.add(self.form_panel, weight=0)
+            self.panes.add(self.result_panel, weight=1)
+            self.panes.pack(fill="both", expand=True)
+        else:
+            self.tabs.add(self.form_panel, text="Beam and loads")
+            self.tabs.add(self.result_panel, text="Analysis results")
+            self.tabs.pack(fill="both", expand=True)
+        self.layout_mode = mode
+        self.schedule()
 
     def mousewheel(self, event):
         widget = self.winfo_containing(event.x_root, event.y_root)
@@ -357,6 +407,9 @@ class BeamUI(tk.Tk):
         s.configure("Vertical.TScrollbar", background=surface, troughcolor=bg, arrowcolor=text)
         s.map("Vertical.TScrollbar", background=[("active", accent), ("pressed", accent)])
         s.configure("TPanedwindow", background=bg)
+        s.configure("TNotebook", background=bg, bordercolor=p['border'])
+        s.configure("TNotebook.Tab", background=bg, foreground=text, padding=(12, 6))
+        s.map("TNotebook.Tab", background=[("selected", surface), ("active", surface)], foreground=[("selected", accent)])
         s.configure("TSeparator", background=p['border'])
         self.option_add("*TCombobox*Listbox.background", surface)
         self.option_add("*TCombobox*Listbox.foreground", text)
