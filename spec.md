@@ -1,5 +1,15 @@
 # Beam Designer
 
+## Application platform
+- Build this as a Python desktop application using Tkinter, with `ttk` widgets
+  for standard controls.
+- Present the beam inputs, analysis results, and diagrams in a single desktop
+  window. Use a Tkinter `Canvas` for the beam and analysis diagrams.
+- Keep the interface responsive while users adjust inputs, and refresh readouts
+  and diagrams to reflect the current values.
+- Package and launch it as a desktop app; do not require a web browser or a
+  server.
+
 ## Purpose
 Create shear, moment, and deflection diagrams for a beam and provide
 preliminary bending and deflection checks. Results must state their assumptions
