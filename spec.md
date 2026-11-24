@@ -25,6 +25,7 @@ and limitations; they are not a complete code-compliant beam design.
 - Continuous beams and buckling checks are out of scope for the initial release.
 - Save and Open: A File menu with Save and Open that saves the beam (support type, span, section, deflection limit, and loads) to a file and opens it again. Remove "Saving designs" from the Out of scope section of the spec first.
 - Export results: A button that saves a table of x, V, M, and deflection along the beam to a CSV file that opens in Excel.
+- Calculation sheet: A button that saves the diagrams and checks as a PDF, with the inputs listed at the top, ready to hand in with a design.
 
 ## Inputs and assumptions
 - Support type and span, entered in feet.

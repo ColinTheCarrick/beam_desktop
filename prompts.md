@@ -57,3 +57,9 @@
 - Asked: Retry adding the new initial-scope requirement to the app.
 - Changed: Added a results button that exports the current analysis to an Excel-compatible CSV with position, shear, moment, and deflection, including units and sign conventions in the headers.
 - Worked: Yes. Verified all 601 rows and sampled values against the calculation, including a pending input change, cancellation, invalid inputs, and file errors. Excel itself was not opened during the check.
+
+## Request
+
+- Asked: Add the new initial-scope calculation-sheet requirement to the app.
+- Changed: Added a PDF calculation-sheet button with inputs, loads, reactions, checks, beam and analysis diagrams, and prominent synthetic-data limitations. Added the matplotlib dependency and installation instructions. Corrected the cantilever reaction-moment display to match the counterclockwise-positive reaction on the sheet.
+- Worked: Yes. Checked the generated three-page PDF and rendered page previews, input and check content, diagram titles, cancellation, invalid inputs, write failures, dependency errors, and the corrected reaction sign. Verified that 30 loads are listed and drawn across multiple pages.

@@ -6,6 +6,7 @@ from pathlib import Path
 
 from design_file import read_design, write_design
 from result_export import export_results
+from calculation_sheet import write_calculation_sheet
 
 
 def windows_wheel_lines():
@@ -346,6 +347,7 @@ class BeamUI(tk.Tk):
         r = self.results
         self.label(r, "Analysis results", "Heading.TLabel")
         ttk.Button(r, text="Export results to CSV", command=self.export_csv).pack(anchor="w", pady=(4, 6))
+        ttk.Button(r, text="Save calculation sheet (PDF)", command=self.export_pdf).pack(anchor="w", pady=(0, 6))
         self.summary = self.label(r, "", "MutedCard.TLabel")
         self.label(r, "Self-weight excluded · All entered loads used for stress and deflection", "Hint.TLabel")
         self.metrics = [self.label(r, "", "Metric.TLabel", padding=(12, 9)) for _ in range(3)]
@@ -377,6 +379,21 @@ class BeamUI(tk.Tk):
             export_results(path, result)
         except (OSError, ValueError) as exc:
             messagebox.showerror("Could not export results", str(exc), parent=self)
+
+    def export_pdf(self):
+        result = self.analyze()
+        if result is None:
+            messagebox.showerror("Could not save calculation sheet", "Check the beam inputs before exporting.", parent=self)
+            return
+        path = filedialog.asksaveasfilename(parent=self, title="Save calculation sheet",
+                                           defaultextension=".pdf",
+                                           filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")])
+        if not path:
+            return
+        try:
+            write_calculation_sheet(path, self.design_data(), self.sections[self.section.get()], result)
+        except (OSError, ValueError, RuntimeError, tk.TclError) as exc:
+            messagebox.showerror("Could not save calculation sheet", str(exc), parent=self)
 
     def schedule(self):
         if self.pending is not None:
@@ -420,7 +437,7 @@ class BeamUI(tk.Tk):
     def render(self, r, span, pts, loads, sec, divisor):
         self.properties.configure(text=f"Synthetic: W = {sec['weight']} lb/ft; d = {sec['depth']} in; bf = {sec['bf']} in; tw = {sec['tw']} in; tf = {sec['tf']} in; Ix = {sec['Ix']} in⁴; Sx = {sec['Sx']} in³.")
         self.summary.configure(text=f"{span:g} ft {self.support.get().lower()} beam · {self.section.get()} (synthetic)")
-        reactions = f"Left: {r['left']:.2f} kip · Right: {r['right']:.2f} kip\nUpward-positive reactions" if self.support.get() == "Simply supported" else f"Fixed reaction: {r['left']:.2f} kip upward-positive\nFixed-end reaction moment: {r['fixed']:.2f} kip-ft"
+        reactions = f"Left: {r['left']:.2f} kip · Right: {r['right']:.2f} kip\nUpward-positive reactions" if self.support.get() == "Simply supported" else f"Fixed reaction: {r['left']:.2f} kip upward-positive\nFixed-end reaction moment: {-r['fixed']:.2f} kip-ft (counterclockwise positive)"
         for label, text in zip(self.metrics, ["SUPPORT REACTIONS\n"+reactions, f"PEAK SHEAR (ABSOLUTE)\n{r['vmax']:.2f} kip at x = {r['vx']:.2f} ft", f"PEAK MOMENT (ABSOLUTE)\n{r['mmax']:.2f} kip-ft at x = {r['mx']:.2f} ft · signed {r['msigned']:.2f} kip-ft"]):
             label.configure(text=text)
         compared = "Not compared — enter an allowable stress" if r['allowable'] is None else f"{'Below' if r['stress'] <= r['allowable'] else 'Above'} entered limit of {r['allowable']:.2f} ksi"
