@@ -51,3 +51,9 @@
 - Asked: Add the newly specified initial-scope feature to the app.
 - Changed: Recorded this request; no application changes were made because the saved `spec.md` matched the committed version and contained no new requirement.
 - Worked: Pending the saved edit or text of the new requirement.
+
+## Request
+
+- Asked: Retry adding the new initial-scope requirement to the app.
+- Changed: Added a results button that exports the current analysis to an Excel-compatible CSV with position, shear, moment, and deflection, including units and sign conventions in the headers.
+- Worked: Yes. Verified all 601 rows and sampled values against the calculation, including a pending input change, cancellation, invalid inputs, and file errors. Excel itself was not opened during the check.

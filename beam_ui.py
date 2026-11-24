@@ -5,6 +5,7 @@ from tkinter import filedialog, messagebox, ttk
 from pathlib import Path
 
 from design_file import read_design, write_design
+from result_export import export_results
 
 
 def windows_wheel_lines():
@@ -344,6 +345,7 @@ class BeamUI(tk.Tk):
     def build_results(self):
         r = self.results
         self.label(r, "Analysis results", "Heading.TLabel")
+        ttk.Button(r, text="Export results to CSV", command=self.export_csv).pack(anchor="w", pady=(4, 6))
         self.summary = self.label(r, "", "MutedCard.TLabel")
         self.label(r, "Self-weight excluded · All entered loads used for stress and deflection", "Hint.TLabel")
         self.metrics = [self.label(r, "", "Metric.TLabel", padding=(12, 9)) for _ in range(3)]
@@ -359,6 +361,22 @@ class BeamUI(tk.Tk):
 
     def resize_results(self, event):
         self.schedule()
+
+    def export_csv(self):
+        # Analyze immediately so a pending slider edit cannot export stale values.
+        result = self.analyze()
+        if result is None:
+            messagebox.showerror("Could not export results", "Check the beam inputs before exporting.", parent=self)
+            return
+        path = filedialog.asksaveasfilename(parent=self, title="Export beam results",
+                                           defaultextension=".csv",
+                                           filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
+        if not path:
+            return
+        try:
+            export_results(path, result)
+        except (OSError, ValueError) as exc:
+            messagebox.showerror("Could not export results", str(exc), parent=self)
 
     def schedule(self):
         if self.pending is not None:
@@ -390,6 +408,7 @@ class BeamUI(tk.Tk):
             result = self.calculate(span, self.support.get(), pts, loads, sec, allow, divisor)
             self.error.configure(text="")
             self.render(result, span, pts, loads, sec, divisor)
+            return result
         except (ValueError, tk.TclError, ZeroDivisionError) as exc:
             self.error.configure(text=str(exc))
             self.summary.configure(text="Analysis unavailable — check the inputs.")
