@@ -1,0 +1,1453 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" id="theme-color-meta" content="#f4f6fa">
+    <title>Beam Designer - Prototype</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --page-bg: #f4f6fa;
+        --surface: #ffffff;
+        --surface-raised: #fbfcfe;
+        --surface-soft: #fafbfd;
+        --text: #172338;
+        --text-label: #34445c;
+        --text-muted: #687990;
+        --text-secondary: #52647a;
+        --text-soft: #718198;
+        --border: #dfe5ee;
+        --border-soft: #e3e8f0;
+        --border-control: #c9d2df;
+        --border-row: #e2e8f0;
+        --accent: #1d5ca8;
+        --accent-hover: #174b8a;
+        --accent-contrast: #ffffff;
+        --accent-soft: rgba(47, 105, 184, 0.2);
+        --shadow: rgba(27, 44, 71, 0.04);
+        --warning-bg: #fff2ee;
+        --warning-border: #e8b3a5;
+        --warning-accent: #be462c;
+        --warning-text: #64291d;
+        --badge-bg: #fff6e6;
+        --badge-border: #efc579;
+        --badge-text: #80530c;
+        --notice-text: #80530c;
+        --error: #a22d1e;
+        --pass: #177044;
+        --fail: #a22d1e;
+        --pending: #80530c;
+        --divider: #e8edf3;
+        --metric-border: #e1e7ef;
+        --chart-zero: #b7c1ce;
+        --chart-curve: #2471bd;
+        --chart-beam: #263c59;
+        --chart-support-fill: #dce5ef;
+        --chart-support-stroke: #263c59;
+        --chart-load: #bd4d35;
+        --chart-load-text: #8b3323;
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: var(--text);
+        background: var(--page-bg);
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --page-bg: #101725;
+        --surface: #182337;
+        --surface-raised: #202d43;
+        --surface-soft: #1c2940;
+        --text: #e8eef8;
+        --text-label: #d4dfef;
+        --text-muted: #b0bfd4;
+        --text-secondary: #c1ccdc;
+        --text-soft: #9cacc2;
+        --border: #34445c;
+        --border-soft: #384962;
+        --border-control: #4a5b74;
+        --border-row: #34445c;
+        --accent: #8ab8ff;
+        --accent-hover: #a7caff;
+        --accent-contrast: #101725;
+        --accent-soft: rgba(138, 184, 255, 0.28);
+        --shadow: rgba(0, 0, 0, 0.18);
+        --warning-bg: #38252a;
+        --warning-border: #80515b;
+        --warning-accent: #ff8c77;
+        --warning-text: #ffd9d1;
+        --badge-bg: #3a3324;
+        --badge-border: #806b3c;
+        --badge-text: #ffe0a2;
+        --notice-text: #ffe0a2;
+        --error: #ff9a8f;
+        --pass: #78d6a2;
+        --fail: #ff9a8f;
+        --pending: #ffe0a2;
+        --divider: #34445c;
+        --metric-border: #34445c;
+        --chart-zero: #667991;
+        --chart-curve: #8ab8ff;
+        --chart-beam: #dce7f7;
+        --chart-support-fill: #2b3e59;
+        --chart-support-stroke: #c5d4e8;
+        --chart-load: #ff9a82;
+        --chart-load-text: #ffc4b7;
+      }
+
+      :root[data-theme="night"] {
+        color-scheme: dark;
+        --page-bg: #080d20;
+        --surface: #111a35;
+        --surface-raised: #192447;
+        --surface-soft: #151f3e;
+        --text: #e9eaff;
+        --text-label: #d9dcff;
+        --text-muted: #b0b9dc;
+        --text-secondary: #c1c8e7;
+        --text-soft: #929ec8;
+        --border: #303c68;
+        --border-soft: #34416e;
+        --border-control: #485684;
+        --border-row: #303c68;
+        --accent: #9ba8ff;
+        --accent-hover: #bac2ff;
+        --accent-contrast: #0c1230;
+        --accent-soft: rgba(155, 168, 255, 0.3);
+        --shadow: rgba(0, 0, 0, 0.28);
+        --warning-bg: #30243b;
+        --warning-border: #674b7c;
+        --warning-accent: #ff88c8;
+        --warning-text: #f4d8ff;
+        --badge-bg: #34284c;
+        --badge-border: #65518c;
+        --badge-text: #e3d1ff;
+        --notice-text: #e3d1ff;
+        --error: #ff9cc9;
+        --pass: #80e2c3;
+        --fail: #ff9cc9;
+        --pending: #e3d1ff;
+        --divider: #303c68;
+        --metric-border: #303c68;
+        --chart-zero: #6573a0;
+        --chart-curve: #a1b4ff;
+        --chart-beam: #dce3ff;
+        --chart-support-fill: #253460;
+        --chart-support-stroke: #c7d0ff;
+        --chart-load: #ff76c7;
+        --chart-load-text: #ffb6df;
+      }
+
+      :root[data-theme="ocean"] {
+        color-scheme: light;
+        --page-bg: #eaf5f6;
+        --surface: #fbffff;
+        --surface-raised: #f2fbfb;
+        --surface-soft: #f4fbfb;
+        --text: #17333a;
+        --text-label: #24464e;
+        --text-muted: #54717a;
+        --text-secondary: #3e626a;
+        --text-soft: #6b8990;
+        --border: #c8dfe1;
+        --border-soft: #d4e8e9;
+        --border-control: #aecbd0;
+        --border-row: #cde2e4;
+        --accent: #087f8c;
+        --accent-hover: #066a75;
+        --accent-contrast: #ffffff;
+        --accent-soft: rgba(8, 127, 140, 0.2);
+        --shadow: rgba(16, 73, 82, 0.06);
+        --warning-bg: #fff4e8;
+        --warning-border: #edc49f;
+        --warning-accent: #d36b38;
+        --warning-text: #6d3e25;
+        --badge-bg: #e2f5ee;
+        --badge-border: #9acdb8;
+        --badge-text: #285d48;
+        --notice-text: #285d48;
+        --error: #a44232;
+        --pass: #21744f;
+        --fail: #a44232;
+        --pending: #806121;
+        --divider: #d7e8e9;
+        --metric-border: #d3e4e6;
+        --chart-zero: #a5c4c8;
+        --chart-curve: #098a9a;
+        --chart-beam: #22515a;
+        --chart-support-fill: #d0e7e9;
+        --chart-support-stroke: #22515a;
+        --chart-load: #d96445;
+        --chart-load-text: #91412f;
+      }
+
+      :root[data-theme="sunset"] {
+        color-scheme: light;
+        --page-bg: #fff4e9;
+        --surface: #fffdf9;
+        --surface-raised: #fff9f1;
+        --surface-soft: #fff8f0;
+        --text: #3b2b35;
+        --text-label: #573c49;
+        --text-muted: #806a77;
+        --text-secondary: #6a5360;
+        --text-soft: #987f89;
+        --border: #ead8d0;
+        --border-soft: #f0dfd6;
+        --border-control: #d9c3bc;
+        --border-row: #ebd8d0;
+        --accent: #b54d69;
+        --accent-hover: #963c57;
+        --accent-contrast: #ffffff;
+        --accent-soft: rgba(181, 77, 105, 0.2);
+        --shadow: rgba(89, 49, 56, 0.06);
+        --warning-bg: #fff0e8;
+        --warning-border: #edb8a4;
+        --warning-accent: #cd5c3a;
+        --warning-text: #713525;
+        --badge-bg: #fff0cf;
+        --badge-border: #edca85;
+        --badge-text: #77521c;
+        --notice-text: #77521c;
+        --error: #a23d32;
+        --pass: #39704b;
+        --fail: #a23d32;
+        --pending: #77521c;
+        --divider: #efdfd6;
+        --metric-border: #eadbd3;
+        --chart-zero: #cdb9b2;
+        --chart-curve: #b44f76;
+        --chart-beam: #63404e;
+        --chart-support-fill: #f0d9ce;
+        --chart-support-stroke: #63404e;
+        --chart-load: #dd6b3f;
+        --chart-load-text: #963f2a;
+      }
+
+      :root[data-theme="forest"] {
+        color-scheme: light;
+        --page-bg: #edf4eb;
+        --surface: #fbfef9;
+        --surface-raised: #f5faf2;
+        --surface-soft: #f4f8f1;
+        --text: #25352a;
+        --text-label: #344a39;
+        --text-muted: #617567;
+        --text-secondary: #4e6555;
+        --text-soft: #7d9181;
+        --border: #d4e1d3;
+        --border-soft: #dce8da;
+        --border-control: #bdcfbd;
+        --border-row: #d6e3d5;
+        --accent: #34734a;
+        --accent-hover: #285d3b;
+        --accent-contrast: #ffffff;
+        --accent-soft: rgba(52, 115, 74, 0.2);
+        --shadow: rgba(36, 76, 46, 0.06);
+        --warning-bg: #fff5e7;
+        --warning-border: #e9c79d;
+        --warning-accent: #be6344;
+        --warning-text: #684128;
+        --badge-bg: #f2f0d8;
+        --badge-border: #d5cf91;
+        --badge-text: #60551d;
+        --notice-text: #60551d;
+        --error: #9c4235;
+        --pass: #2d7549;
+        --fail: #9c4235;
+        --pending: #74631f;
+        --divider: #dce7da;
+        --metric-border: #d7e3d5;
+        --chart-zero: #b6c8b6;
+        --chart-curve: #37845d;
+        --chart-beam: #344f3c;
+        --chart-support-fill: #d7e7d4;
+        --chart-support-stroke: #344f3c;
+        --chart-load: #bd5b43;
+        --chart-load-text: #8c4031;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--page-bg);
+      }
+
+      button, input, select { font: inherit; }
+
+      .shell {
+        width: min(1440px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 56px;
+      }
+
+      .masthead {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+      }
+
+      .theme-picker {
+        min-width: 165px;
+        gap: 5px;
+        color: var(--text-label);
+        font-size: 0.75rem;
+      }
+
+      .eyebrow {
+        margin: 0 0 6px;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1, h2, h3, p { margin-top: 0; }
+      h1 { margin-bottom: 4px; font-size: clamp(1.8rem, 3vw, 2.45rem); }
+      h2 { margin-bottom: 14px; font-size: 1.1rem; }
+      h3 { margin-bottom: 10px; font-size: 0.94rem; }
+      .subtitle { margin: 0; color: var(--text-muted); }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 4px 10px;
+        border: 1px solid var(--badge-border);
+        border-radius: 999px;
+        background: var(--badge-bg);
+        color: var(--badge-text);
+        font-size: 0.76rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .warning {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border: 1px solid var(--warning-border);
+        border-left: 5px solid var(--warning-accent);
+        border-radius: 8px;
+        background: var(--warning-bg);
+        color: var(--warning-text);
+        line-height: 1.45;
+      }
+
+      .warning strong { display: block; margin-bottom: 3px; }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
+        align-items: start;
+        gap: 20px;
+      }
+
+      .panel {
+        margin-bottom: 16px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+        box-shadow: 0 3px 14px var(--shadow);
+      }
+
+      .form-panel { position: sticky; top: 16px; }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .field-grid .full { grid-column: 1 / -1; }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        color: var(--text-label);
+        font-size: 0.83rem;
+        font-weight: 650;
+      }
+
+      input, select {
+        width: 100%;
+        min-height: 40px;
+        padding: 8px 10px;
+        border: 1px solid var(--border-control);
+        border-radius: 7px;
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      input[type="range"] {
+        min-height: 24px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+
+      input:focus, select:focus, button:focus-visible {
+        outline: 3px solid var(--accent-soft);
+        outline-offset: 1px;
+        border-color: var(--accent);
+      }
+
+      .slider-label {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .slider-label output {
+        color: var(--accent);
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .unit { color: var(--text-soft); font-weight: 400; }
+      .hint { margin: 6px 0 0; color: var(--text-soft); font-size: 0.76rem; line-height: 1.4; }
+      .divider { height: 1px; margin: 18px 0; background: var(--divider); }
+      .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+      .section-head h3 { margin: 0 0 10px; }
+
+      .load-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+        align-items: end;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid var(--border-row);
+        border-radius: 8px;
+        background: var(--surface-soft);
+      }
+
+      .load-row label { font-size: 0.73rem; }
+      .load-row input { min-height: 36px; padding: 6px 8px; }
+      .load-row .remove-load { min-height: 36px; padding: 6px 9px; }
+      .load-row.uniform { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
+
+      .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+      button {
+        min-height: 40px;
+        padding: 8px 12px;
+        border: 1px solid var(--border-control);
+        border-radius: 7px;
+        background: var(--surface);
+        color: var(--text-label);
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      button:hover { background: var(--surface-raised); }
+      button:disabled { cursor: not-allowed; opacity: 0.6; }
+      .primary {
+        width: 100%;
+        margin-top: 16px;
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--accent-contrast);
+      }
+
+      .primary:hover { background: var(--accent-hover); }
+      .small-button { min-height: 32px; padding: 5px 8px; font-size: 0.77rem; }
+
+      .load-error {
+        margin-top: 12px;
+        color: var(--error);
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+
+      .load-error:empty { display: none; }
+      .data-note { margin: 0; color: var(--notice-text); font-size: 0.78rem; line-height: 1.4; }
+
+      .results-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+      .results-header p { margin-bottom: 0; color: var(--text-muted); font-size: 0.84rem; }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin: 16px 0;
+      }
+
+      .metric {
+        min-width: 0;
+        padding: 14px;
+        border: 1px solid var(--metric-border);
+        border-radius: 9px;
+        background: var(--surface-raised);
+      }
+
+      .metric span, .metric small { display: block; color: var(--text-muted); font-size: 0.75rem; }
+      .metric strong { display: block; margin: 7px 0 4px; color: var(--text); font-size: 1.35rem; }
+      .metric small { line-height: 1.35; }
+
+      .check-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+      }
+
+      .check {
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--surface-raised);
+      }
+
+      .check h3 { margin-bottom: 6px; }
+      .check p { margin: 0; color: var(--text-secondary); font-size: 0.84rem; line-height: 1.45; }
+      .check-status { display: inline-block; margin-top: 9px; font-weight: 750; }
+      .check-status.pass { color: var(--pass); }
+      .check-status.fail { color: var(--fail); }
+      .check-status.pending { color: var(--pending); }
+
+      .diagram {
+        margin: 12px 0 18px;
+        padding: 12px 12px 8px;
+        border: 1px solid var(--border-soft);
+        border-radius: 9px;
+      }
+
+      .diagram figcaption { margin: 0 0 6px; color: var(--text-label); font-size: 0.84rem; font-weight: 700; }
+      .diagram svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .axis-label { fill: var(--text-soft); font: 11px "Segoe UI", Arial, sans-serif; }
+      .zero-line { stroke: var(--chart-zero); stroke-width: 1; }
+      .curve { fill: none; stroke: var(--chart-curve); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+      .beam { stroke: var(--chart-beam); stroke-width: 8; stroke-linecap: round; }
+      .support { fill: var(--chart-support-fill); stroke: var(--chart-support-stroke); stroke-width: 2; }
+      .load-line { stroke: var(--chart-load); stroke-width: 1.8; }
+      .load-label { fill: var(--chart-load-text); font: 12px "Segoe UI", Arial, sans-serif; }
+      .load-arrowhead { fill: var(--chart-load); }
+      .support-wall { stroke: var(--chart-support-stroke); stroke-width: 5; }
+
+      .footer-note {
+        margin: 4px 2px 0;
+        color: var(--text-soft);
+        font-size: 0.75rem;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 900px) {
+        .workspace { grid-template-columns: 1fr; }
+        .form-panel { position: static; }
+      }
+
+      @media (max-width: 560px) {
+        .shell { width: min(100% - 20px, 720px); padding-top: 18px; }
+        .masthead { align-items: flex-start; flex-direction: column; }
+        .header-actions { width: 100%; align-items: flex-end; justify-content: space-between; }
+        .panel { padding: 15px; }
+        .metrics, .check-grid { grid-template-columns: 1fr; }
+        .load-row, .load-row.uniform { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .load-row .remove-load { grid-column: 1 / -1; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Beam analysis prototype</p>
+          <h1>Beam Designer</h1>
+          <p class="subtitle">Reactions, internal diagrams, and preliminary deflection / stress screens.</p>
+        </div>
+        <div class="header-actions">
+          <label class="theme-picker" for="theme-select">
+            Color scheme
+            <select id="theme-select">
+              <option value="light">Light</option>
+              <option value="dark">Dark mode</option>
+              <option value="night">Night mode</option>
+              <option value="ocean">Ocean</option>
+              <option value="sunset">Sunset</option>
+              <option value="forest">Forest</option>
+            </select>
+          </label>
+          <span class="badge">Prototype - synthetic data</span>
+        </div>
+      </header>
+
+      <div class="warning" role="alert">
+        <strong>Not for real design or construction.</strong>
+        The demo section properties are fabricated placeholders, not verified W12x26 data. Results are for software prototyping only; this tool does not check beam capacity, buckling, shear, bearing, load combinations, or code compliance.
+      </div>
+
+      <div class="workspace">
+        <form class="panel form-panel" id="analysis-form">
+          <h2>Beam and loads</h2>
+          <div class="field-grid">
+            <label>
+              Support condition
+              <select id="support-type">
+                <option value="simply-supported">Simply supported</option>
+                <option value="cantilever">Cantilever (fixed at left)</option>
+              </select>
+            </label>
+            <label class="full">
+              <span class="slider-label"><span>Span <span class="unit">(ft)</span></span><output id="span-readout" for="span-ft">20.0 ft</output></span>
+              <input id="span-ft" type="range" min="0" max="100" step="0.5" value="20" required>
+            </label>
+            <p class="hint full">Span slider: 0-100 ft in 0.5 ft steps. A zero-length beam cannot be analyzed.</p>
+            <label class="full">
+              Demo section
+              <select id="section-id" disabled>
+                <option>Loading synthetic demo data...</option>
+              </select>
+            </label>
+          </div>
+          <p class="hint" id="section-properties">Section data has not loaded.</p>
+          <p class="hint" id="material-properties"></p>
+          <p class="data-note" id="dataset-note"></p>
+
+          <div class="divider"></div>
+          <div class="section-head">
+            <h3>Point loads</h3>
+            <button type="button" class="small-button" id="add-point-load">+ Add point</button>
+          </div>
+          <div id="point-loads"></div>
+
+          <div class="section-head" style="margin-top: 14px">
+            <h3>Uniform loads</h3>
+            <button type="button" class="small-button" id="add-uniform-load">+ Add uniform</button>
+          </div>
+          <div id="uniform-loads"></div>
+          <p class="hint">Point loads: -20 to 20 kip. Uniform loads: -5 to 5 kip/ft. Negative values act upward; positive values act downward. Position sliders run from 0 to the span. Beam self-weight is excluded.</p>
+
+          <div class="divider"></div>
+          <div class="field-grid">
+            <label>
+              Allowable bending stress <span class="unit">(ksi, optional)</span>
+              <input id="allowable-stress" type="number" min="0.001" step="any" placeholder="Enter your limit">
+            </label>
+            <label>
+              Deflection limit divisor
+              <input id="deflection-divisor" type="number" min="1" max="10000" step="any" value="360" required>
+            </label>
+          </div>
+          <p class="hint">L/360 is a configurable screening default, not a universal design limit. The allowable stress is user-supplied; the app does not derive it from Fy.</p>
+          <button class="primary" id="analyze-button" type="submit" disabled>Analyze beam</button>
+          <div class="load-error" id="error-message" role="alert" aria-live="polite"></div>
+        </form>
+
+        <section aria-label="Analysis results">
+          <div class="panel">
+            <div class="results-header">
+              <div>
+                <h2>Analysis results</h2>
+                <p id="result-summary">Loading the example beam...</p>
+              </div>
+              <span class="badge">Self-weight excluded</span>
+            </div>
+            <div id="results-content"></div>
+          </div>
+          <p class="footer-note">Use a qualified structural engineer and verified material / section data for real design. The checks shown here are limited arithmetic comparisons under the displayed assumptions.</p>
+        </section>
+      </div>
+    </main>
+
+    <script id="beam-engine">
+      function calculateBeam(config) {
+        function requireFinite(value, label) {
+          if (typeof value !== "number" || !isFinite(value)) {
+            throw new Error(label + " must be a finite number.");
+          }
+        }
+
+        requireFinite(config.spanFt, "Span");
+        requireFinite(config.Eksi, "Elastic modulus");
+        requireFinite(config.IxIn4, "Moment of inertia");
+        if (config.spanFt <= 0 || config.Eksi <= 0 || config.IxIn4 <= 0) {
+          throw new Error("Span, elastic modulus, and moment of inertia must be greater than zero.");
+        }
+        if (config.supportType !== "simply-supported" && config.supportType !== "cantilever") {
+          throw new Error("Choose a supported beam condition.");
+        }
+
+        var spanIn = config.spanFt * 12;
+        var points = [];
+        var lines = [];
+        var totalForceKip = 0;
+        var totalMomentAboutLeftKipIn = 0;
+        var i;
+
+        for (i = 0; i < config.pointLoads.length; i++) {
+          var point = config.pointLoads[i];
+          requireFinite(point.positionFt, "Point-load position");
+          requireFinite(point.loadKip, "Point-load magnitude");
+          if (point.positionFt < 0 || point.positionFt > config.spanFt) {
+            throw new Error("Point-load positions must be within the beam span.");
+          }
+          var pointPositionIn = point.positionFt * 12;
+          points.push({ positionIn: pointPositionIn, loadKip: point.loadKip });
+          totalForceKip += point.loadKip;
+          totalMomentAboutLeftKipIn += point.loadKip * pointPositionIn;
+        }
+
+        for (i = 0; i < config.distributedLoads.length; i++) {
+          var line = config.distributedLoads[i];
+          requireFinite(line.startFt, "Uniform-load start");
+          requireFinite(line.endFt, "Uniform-load end");
+          requireFinite(line.loadKipPerFt, "Uniform-load magnitude");
+          if (line.startFt < 0 || line.endFt > config.spanFt || line.endFt <= line.startFt) {
+            throw new Error("Uniform-load extents must satisfy 0 <= start < end <= span.");
+          }
+          var startIn = line.startFt * 12;
+          var endIn = line.endFt * 12;
+          var intensityKipPerIn = line.loadKipPerFt / 12;
+          lines.push({
+            startIn: startIn,
+            endIn: endIn,
+            intensityKipPerIn: intensityKipPerIn
+          });
+          var lineForceKip = intensityKipPerIn * (endIn - startIn);
+          totalForceKip += lineForceKip;
+          totalMomentAboutLeftKipIn += lineForceKip * (startIn + endIn) / 2;
+        }
+
+        if (points.length + lines.length === 0) {
+          throw new Error("Add at least one point or uniform load before analyzing.");
+        }
+
+        var rightReactionKip = 0;
+        var leftReactionKip;
+        var fixedEndReactionMomentKipIn = 0;
+        if (config.supportType === "simply-supported") {
+          rightReactionKip = totalMomentAboutLeftKipIn / spanIn;
+          leftReactionKip = totalForceKip - rightReactionKip;
+        } else {
+          leftReactionKip = totalForceKip;
+          fixedEndReactionMomentKipIn = -totalMomentAboutLeftKipIn;
+        }
+
+        function responseAt(xIn) {
+          var shearKip = leftReactionKip;
+          var momentKipIn = fixedEndReactionMomentKipIn + leftReactionKip * xIn;
+          var j;
+          for (j = 0; j < points.length; j++) {
+            if (points[j].positionIn < xIn) {
+              shearKip -= points[j].loadKip;
+              momentKipIn -= points[j].loadKip * (xIn - points[j].positionIn);
+            }
+          }
+          for (j = 0; j < lines.length; j++) {
+            var lineEndAtX = Math.min(xIn, lines[j].endIn);
+            if (lineEndAtX > lines[j].startIn) {
+              var loadedLengthIn = lineEndAtX - lines[j].startIn;
+              shearKip -= lines[j].intensityKipPerIn * loadedLengthIn;
+              momentKipIn -= lines[j].intensityKipPerIn * 0.5 * (
+                Math.pow(xIn - lines[j].startIn, 2) -
+                Math.pow(xIn - lineEndAtX, 2)
+              );
+            }
+          }
+          return { shearKip: shearKip, momentKipIn: momentKipIn };
+        }
+
+        var xInches = [];
+        var sampleCount = 1200;
+        for (i = 0; i <= sampleCount; i++) {
+          xInches.push(spanIn * i / sampleCount);
+        }
+        for (i = 0; i < points.length; i++) {
+          xInches.push(points[i].positionIn);
+          xInches.push(Math.max(0, points[i].positionIn - 0.001));
+          xInches.push(Math.min(spanIn, points[i].positionIn + 0.001));
+        }
+        for (i = 0; i < lines.length; i++) {
+          xInches.push(lines[i].startIn);
+          xInches.push(lines[i].endIn);
+        }
+        xInches.sort(function (a, b) { return a - b; });
+        var uniqueXInches = [];
+        for (i = 0; i < xInches.length; i++) {
+          if (uniqueXInches.length === 0 || Math.abs(xInches[i] - uniqueXInches[uniqueXInches.length - 1]) > 0.0000001) {
+            uniqueXInches.push(xInches[i]);
+          }
+        }
+
+        var shearValues = [];
+        var momentValues = [];
+        var curvatureValues = [];
+        for (i = 0; i < uniqueXInches.length; i++) {
+          var response = responseAt(uniqueXInches[i]);
+          shearValues.push(response.shearKip);
+          momentValues.push(response.momentKipIn);
+          curvatureValues.push(-response.momentKipIn / (config.Eksi * config.IxIn4));
+        }
+
+        var initialSlope = 0;
+        if (config.supportType === "simply-supported") {
+          var weightedCurvatureIntegral = 0;
+          for (i = 0; i < uniqueXInches.length - 1; i++) {
+            var dxForSlope = uniqueXInches[i + 1] - uniqueXInches[i];
+            weightedCurvatureIntegral += 0.5 * (
+              curvatureValues[i] * (spanIn - uniqueXInches[i]) +
+              curvatureValues[i + 1] * (spanIn - uniqueXInches[i + 1])
+            ) * dxForSlope;
+          }
+          initialSlope = -weightedCurvatureIntegral / spanIn;
+        }
+
+        var deflectionValues = [0];
+        var slope = initialSlope;
+        var deflection = 0;
+        for (i = 0; i < uniqueXInches.length - 1; i++) {
+          var dx = uniqueXInches[i + 1] - uniqueXInches[i];
+          var nextSlope = slope + 0.5 * (curvatureValues[i] + curvatureValues[i + 1]) * dx;
+          deflection += 0.5 * (slope + nextSlope) * dx;
+          deflectionValues.push(deflection);
+          slope = nextSlope;
+        }
+
+        function findMaximumAbsolute(values) {
+          var index = 0;
+          for (var k = 1; k < values.length; k++) {
+            if (Math.abs(values[k]) > Math.abs(values[index])) {
+              index = k;
+            }
+          }
+          return { value: values[index], index: index };
+        }
+
+        var maxShear = findMaximumAbsolute(shearValues);
+        var maxMoment = findMaximumAbsolute(momentValues);
+        var maxDeflection = findMaximumAbsolute(deflectionValues);
+        var shearDiagram = [];
+        var momentDiagram = [];
+        var deflectionDiagram = [];
+        for (i = 0; i < uniqueXInches.length; i++) {
+          shearDiagram.push({ xFt: uniqueXInches[i] / 12, value: shearValues[i] });
+          momentDiagram.push({ xFt: uniqueXInches[i] / 12, value: momentValues[i] / 12 });
+          deflectionDiagram.push({ xFt: uniqueXInches[i] / 12, value: deflectionValues[i] });
+        }
+
+        return {
+          leftReactionKip: leftReactionKip,
+          rightReactionKip: rightReactionKip,
+          fixedEndReactionMomentKipFt: fixedEndReactionMomentKipIn / 12,
+          maxShearAbsKip: Math.abs(maxShear.value),
+          maxShearValueKip: maxShear.value,
+          maxShearLocationFt: uniqueXInches[maxShear.index] / 12,
+          maxMomentAbsKipFt: Math.abs(maxMoment.value) / 12,
+          maxMomentValueKipFt: maxMoment.value / 12,
+          maxMomentLocationFt: uniqueXInches[maxMoment.index] / 12,
+          maxDeflectionAbsIn: Math.abs(maxDeflection.value),
+          maxDeflectionValueIn: maxDeflection.value,
+          maxDeflectionLocationFt: uniqueXInches[maxDeflection.index] / 12,
+          shearDiagram: shearDiagram,
+          momentDiagram: momentDiagram,
+          deflectionDiagram: deflectionDiagram
+        };
+      }
+    </script>
+    <script>
+      (function () {
+        if (typeof document === "undefined") {
+          return;
+        }
+
+        var dataset = null;
+        var pointLoadRows = [];
+        var uniformLoadRows = [];
+        var nextLoadId = 1;
+        var form = document.getElementById("analysis-form");
+        var pointLoadContainer = document.getElementById("point-loads");
+        var uniformLoadContainer = document.getElementById("uniform-loads");
+        var errorMessage = document.getElementById("error-message");
+        var resultsContent = document.getElementById("results-content");
+        var themeSelect = document.getElementById("theme-select");
+        var themeColorMeta = document.getElementById("theme-color-meta");
+        var themeColors = {
+          light: "#f4f6fa",
+          dark: "#101725",
+          night: "#080d20",
+          ocean: "#eaf5f6",
+          sunset: "#fff4e9",
+          forest: "#edf4eb"
+        };
+
+        themeSelect.addEventListener("change", function () {
+          var theme = themeSelect.value;
+          document.documentElement.setAttribute("data-theme", theme);
+          themeColorMeta.setAttribute("content", themeColors[theme]);
+        });
+
+        function escapeHtml(value) {
+          return String(value).replace(/[&<>"']/g, function (character) {
+            if (character === "&") { return "&amp;"; }
+            if (character === "<") { return "&lt;"; }
+            if (character === ">") { return "&gt;"; }
+            if (character === "\"") { return "&quot;"; }
+            return "&#39;";
+          });
+        }
+
+        function formatNumber(value, decimals) {
+          var rounded = Number(value.toFixed(decimals));
+          return rounded.toLocaleString("en-US", {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+          });
+        }
+
+        function readNumber(input, label, optional) {
+          var raw = input.value.replace(/^\s+|\s+$/g, "");
+          if (raw === "" && optional) {
+            return null;
+          }
+          var value = Number(raw);
+          if (raw === "" || !isFinite(value)) {
+            throw new Error(label + " must be a valid number.");
+          }
+          return value;
+        }
+
+        function addLoadRow(kind) {
+          syncLoadRowsFromDOM();
+          var span = Number(document.getElementById("span-ft").value);
+          var id = nextLoadId++;
+          if (kind === "point") {
+            pointLoadRows.push({ id: id, positionFt: span / 2, loadKip: 1 });
+          } else {
+            uniformLoadRows.push({ id: id, startFt: 0, endFt: span, loadKipPerFt: 1 });
+          }
+          renderLoadRows();
+        }
+
+        function renderLoadRows() {
+          var html = "";
+          var span = Number(document.getElementById("span-ft").value);
+          var i;
+          for (i = 0; i < pointLoadRows.length; i++) {
+            var point = pointLoadRows[i];
+            html += '<div class="load-row" data-load-kind="point" data-load-id="' + point.id + '">' +
+              '<label><span class="slider-label">Load (kip)<output>' + formatNumber(point.loadKip, 2) + ' kip</output></span>' +
+              '<input type="range" min="-20" max="20" step="0.25" value="' + point.loadKip + '" data-field="loadKip" required></label>' +
+              '<label><span class="slider-label">Position (ft)<output>' + formatNumber(point.positionFt, 2) + ' ft</output></span>' +
+              '<input type="range" min="0" max="' + span + '" step="0.25" value="' + point.positionFt + '" data-field="positionFt" required></label>' +
+              '<button type="button" class="remove-load" aria-label="Remove point load">Remove</button></div>';
+          }
+          pointLoadContainer.innerHTML = html || '<p class="hint">No point loads.</p>';
+
+          html = "";
+          for (i = 0; i < uniformLoadRows.length; i++) {
+            var line = uniformLoadRows[i];
+            html += '<div class="load-row uniform" data-load-kind="uniform" data-load-id="' + line.id + '">' +
+              '<label><span class="slider-label">Load (kip/ft)<output>' + formatNumber(line.loadKipPerFt, 2) + ' kip/ft</output></span>' +
+              '<input type="range" min="-5" max="5" step="0.1" value="' + line.loadKipPerFt + '" data-field="loadKipPerFt" required></label>' +
+              '<label><span class="slider-label">Start (ft)<output>' + formatNumber(line.startFt, 2) + ' ft</output></span>' +
+              '<input type="range" min="0" max="' + span + '" step="0.25" value="' + line.startFt + '" data-field="startFt" required></label>' +
+              '<label><span class="slider-label">End (ft)<output>' + formatNumber(line.endFt, 2) + ' ft</output></span>' +
+              '<input type="range" min="0" max="' + span + '" step="0.25" value="' + line.endFt + '" data-field="endFt" required></label>' +
+              '<button type="button" class="remove-load" aria-label="Remove uniform load">Remove</button></div>';
+          }
+          uniformLoadContainer.innerHTML = html || '<p class="hint">No uniform loads.</p>';
+        }
+
+        function refreshLoadReadout(input) {
+          var readout = input.parentNode.querySelector("output");
+          var value = Number(input.value);
+          var field = input.getAttribute("data-field");
+          if (field === "loadKip") {
+            readout.textContent = formatNumber(value, 2) + " kip";
+          } else if (field === "loadKipPerFt") {
+            readout.textContent = formatNumber(value, 2) + " kip/ft";
+          } else {
+            readout.textContent = formatNumber(value, 2) + " ft";
+          }
+        }
+
+        function syncLoadRowsFromDOM() {
+          function sync(container, rows) {
+            var domRows = container.querySelectorAll(".load-row");
+            for (var i = 0; i < domRows.length; i++) {
+              var id = Number(domRows[i].getAttribute("data-load-id"));
+              var fields = domRows[i].querySelectorAll("[data-field]");
+              for (var j = 0; j < rows.length; j++) {
+                if (rows[j].id === id) {
+                  for (var k = 0; k < fields.length; k++) {
+                    rows[j][fields[k].getAttribute("data-field")] = Number(fields[k].value);
+                  }
+                  break;
+                }
+              }
+            }
+          }
+          sync(pointLoadContainer, pointLoadRows);
+          sync(uniformLoadContainer, uniformLoadRows);
+        }
+
+        function updatePositionSliderLimits(spanFt) {
+          var pointInputs = pointLoadContainer.querySelectorAll('[data-field="positionFt"]');
+          var uniformRows = uniformLoadContainer.querySelectorAll(".load-row");
+          var disabled = spanFt <= 0;
+          document.getElementById("add-point-load").disabled = disabled;
+          document.getElementById("add-uniform-load").disabled = disabled;
+          for (var i = 0; i < pointInputs.length; i++) {
+            pointInputs[i].disabled = disabled;
+          }
+          for (i = 0; i < uniformRows.length; i++) {
+            uniformRows[i].querySelector('[data-field="startFt"]').disabled = disabled;
+            uniformRows[i].querySelector('[data-field="endFt"]').disabled = disabled;
+          }
+          if (disabled) {
+            return;
+          }
+
+          for (var i = 0; i < pointInputs.length; i++) {
+            pointInputs[i].max = spanFt;
+            if (Number(pointInputs[i].value) > spanFt) {
+              pointInputs[i].value = spanFt;
+            }
+            pointInputs[i].disabled = false;
+            refreshLoadReadout(pointInputs[i]);
+          }
+
+          for (i = 0; i < uniformRows.length; i++) {
+            var startInput = uniformRows[i].querySelector('[data-field="startFt"]');
+            var endInput = uniformRows[i].querySelector('[data-field="endFt"]');
+            startInput.max = spanFt;
+            endInput.max = spanFt;
+            startInput.disabled = false;
+            endInput.disabled = false;
+            var startFt = Number(startInput.value);
+            var endFt = Number(endInput.value);
+            if (spanFt <= 0) {
+              startFt = 0;
+              endFt = 0;
+            } else if (endFt > spanFt) {
+              var loadWidthFt = endFt - startFt;
+              endFt = spanFt;
+              startFt = Math.min(startFt, Math.max(0, endFt - Math.min(loadWidthFt, spanFt)));
+            } else if (startFt > spanFt) {
+              startFt = Math.max(0, spanFt - 0.25);
+            }
+            if (spanFt > 0 && endFt <= startFt) {
+              if (endFt >= spanFt) {
+                startFt = Math.max(0, spanFt - 0.25);
+                endFt = spanFt;
+              } else {
+                endFt = Math.min(spanFt, startFt + 0.25);
+              }
+            }
+            startInput.value = startFt;
+            endInput.value = endFt;
+            refreshLoadReadout(startInput);
+            refreshLoadReadout(endInput);
+          }
+          syncLoadRowsFromDOM();
+        }
+
+        function readLoadRows(container, kind, spanFt) {
+          var rows = container.querySelectorAll(".load-row");
+          var values = [];
+          for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            var fields = row.querySelectorAll("[data-field]");
+            var value = {};
+            for (var j = 0; j < fields.length; j++) {
+              value[fields[j].getAttribute("data-field")] = readNumber(fields[j], "Load value", false);
+            }
+            if (kind === "point") {
+              if (value.positionFt < 0 || value.positionFt > spanFt) {
+                throw new Error("Point-load positions must be between 0 and the span.");
+              }
+              values.push({ positionFt: value.positionFt, loadKip: value.loadKip });
+            } else {
+              if (value.startFt < 0 || value.endFt > spanFt || value.endFt <= value.startFt) {
+                throw new Error("Uniform-load extents must satisfy 0 <= start < end <= span.");
+              }
+              values.push({
+                startFt: value.startFt,
+                endFt: value.endFt,
+                loadKipPerFt: value.loadKipPerFt
+              });
+            }
+          }
+          return values;
+        }
+
+        function selectedSection() {
+          if (!dataset) {
+            throw new Error("Synthetic section data is not loaded yet.");
+          }
+          var id = document.getElementById("section-id").value;
+          for (var i = 0; i < dataset.sections.length; i++) {
+            if (dataset.sections[i].id === id) {
+              return dataset.sections[i];
+            }
+          }
+          throw new Error("The selected section is not present in the data file.");
+        }
+
+        function readAnalysisInput() {
+          var spanFt = readNumber(document.getElementById("span-ft"), "Span", false);
+          if (spanFt <= 0) {
+            throw new Error("Span must be greater than zero.");
+          }
+          var section = selectedSection();
+          var allowableStress = readNumber(document.getElementById("allowable-stress"), "Allowable bending stress", true);
+          if (allowableStress !== null && allowableStress <= 0) {
+            throw new Error("Allowable bending stress must be greater than zero.");
+          }
+          var divisor = readNumber(document.getElementById("deflection-divisor"), "Deflection limit divisor", false);
+          if (divisor <= 0) {
+            throw new Error("Deflection limit divisor must be greater than zero.");
+          }
+          var pointLoads = readLoadRows(pointLoadContainer, "point", spanFt);
+          var distributedLoads = readLoadRows(uniformLoadContainer, "uniform", spanFt);
+          return {
+            config: {
+              spanFt: spanFt,
+              supportType: document.getElementById("support-type").value,
+              Eksi: dataset.material.elasticModulusKsi,
+              IxIn4: section.IxIn4,
+              pointLoads: pointLoads,
+              distributedLoads: distributedLoads
+            },
+            section: section,
+            allowableStressKsi: allowableStress,
+            deflectionDivisor: divisor,
+            pointLoads: pointLoads,
+            distributedLoads: distributedLoads
+          };
+        }
+
+        function maximumDiagramValue(diagram) {
+          var maximum = 0;
+          for (var i = 0; i < diagram.length; i++) {
+            maximum = Math.max(maximum, Math.abs(diagram[i].value));
+          }
+          return maximum;
+        }
+
+        function makePlot(title, diagram, unit, positiveDown) {
+          var width = 760;
+          var height = 190;
+          var left = 58;
+          var right = 18;
+          var top = 14;
+          var bottom = 32;
+          var plotWidth = width - left - right;
+          var plotHeight = height - top - bottom;
+          var spanFt = diagram[diagram.length - 1].xFt || 1;
+          var minimum = 0;
+          var maximum = 0;
+          var i;
+          for (i = 0; i < diagram.length; i++) {
+            minimum = Math.min(minimum, diagram[i].value);
+            maximum = Math.max(maximum, diagram[i].value);
+          }
+          if (Math.abs(maximum - minimum) < 0.000001) {
+            minimum = -1;
+            maximum = 1;
+          } else {
+            var padding = (maximum - minimum) * 0.12;
+            minimum -= padding;
+            maximum += padding;
+          }
+          function xCoordinate(value) {
+            return left + (value / spanFt) * plotWidth;
+          }
+          function yCoordinate(value) {
+            if (positiveDown) {
+              return top + ((value - minimum) / (maximum - minimum)) * plotHeight;
+            }
+            return top + ((maximum - value) / (maximum - minimum)) * plotHeight;
+          }
+          var path = "";
+          for (i = 0; i < diagram.length; i++) {
+            path += (i === 0 ? "M " : " L ") +
+              xCoordinate(diagram[i].xFt).toFixed(2) + " " +
+              yCoordinate(diagram[i].value).toFixed(2);
+          }
+          var zeroY = yCoordinate(0);
+          return '<figure class="diagram"><figcaption>' + escapeHtml(title) + '</figcaption>' +
+            '<svg viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + escapeHtml(title) + '">' +
+            '<line class="zero-line" x1="' + left + '" y1="' + zeroY.toFixed(2) + '" x2="' + (width - right) + '" y2="' + zeroY.toFixed(2) + '"></line>' +
+            '<path class="curve" d="' + path + '"></path>' +
+            '<text class="axis-label" x="' + left + '" y="' + (height - 8) + '">0 ft</text>' +
+            '<text class="axis-label" text-anchor="end" x="' + (width - right) + '" y="' + (height - 8) + '">' + formatNumber(spanFt, 2) + ' ft</text>' +
+            '<text class="axis-label" x="5" y="13">' + escapeHtml(unit) + '</text>' +
+            '<text class="axis-label" x="' + (left + 6) + '" y="' + (zeroY - 5).toFixed(2) + '">0</text>' +
+            '</svg></figure>';
+        }
+
+        function makeBeamDiagram(spanFt, supportType, pointLoads, distributedLoads) {
+          var xStart = 68;
+          var xEnd = 732;
+          var beamY = 112;
+          var beamWidth = xEnd - xStart;
+          function xCoordinate(value) {
+            return xStart + (value / spanFt) * beamWidth;
+          }
+          var svg = '<figure class="diagram"><figcaption>Beam and applied loads (+ downward)</figcaption>' +
+            '<svg viewBox="0 0 800 210" role="img" aria-label="Beam support and load diagram">' +
+            '<defs><marker id="load-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path class="load-arrowhead" d="M 0 0 L 8 4 L 0 8 z"></path></marker></defs>';
+          svg += '<line class="beam" x1="' + xStart + '" y1="' + beamY + '" x2="' + xEnd + '" y2="' + beamY + '"></line>';
+          if (supportType === "cantilever") {
+            svg += '<line class="support-wall" x1="' + (xStart - 12) + '" y1="75" x2="' + (xStart - 12) + '" y2="152"></line>' +
+              '<path class="support-wall" d="M ' + (xStart - 23) + ' 77 L ' + (xStart - 12) + ' 87 M ' + (xStart - 23) + ' 91 L ' + (xStart - 12) + ' 101 M ' + (xStart - 23) + ' 105 L ' + (xStart - 12) + ' 115 M ' + (xStart - 23) + ' 119 L ' + (xStart - 12) + ' 129 M ' + (xStart - 23) + ' 133 L ' + (xStart - 12) + ' 143"></path>';
+          } else {
+            svg += '<path class="support" d="M ' + (xStart - 13) + ' 139 L ' + xStart + ' 115 L ' + (xStart + 13) + ' 139 Z"></path>' +
+              '<path class="support" d="M ' + (xEnd - 13) + ' 139 L ' + xEnd + ' 115 L ' + (xEnd + 13) + ' 139 Z"></path>' +
+              '<circle class="support" cx="' + xEnd + '" cy="146" r="4"></circle>';
+          }
+          for (var i = 0; i < pointLoads.length; i++) {
+            var pointX = xCoordinate(pointLoads[i].positionFt);
+            var isDown = pointLoads[i].loadKip >= 0;
+            var y1 = isDown ? 52 : beamY - 7;
+            var y2 = isDown ? beamY - 7 : 52;
+            svg += '<line class="load-line" x1="' + pointX + '" y1="' + y1 + '" x2="' + pointX + '" y2="' + y2 + '" marker-end="url(#load-arrow)"></line>' +
+              '<text class="load-label" text-anchor="middle" x="' + pointX + '" y="23">P ' + formatNumber(pointLoads[i].loadKip, 2) + ' kip</text>';
+          }
+          for (i = 0; i < distributedLoads.length; i++) {
+            var load = distributedLoads[i];
+            var loadStart = xCoordinate(load.startFt);
+            var loadEnd = xCoordinate(load.endFt);
+            var directionDown = load.loadKipPerFt >= 0;
+            var topY = 62;
+            var arrowY = directionDown ? beamY - 7 : 52;
+            var arrowCount = 8;
+            var gaps = [];
+            for (var p = 0; p < pointLoads.length; p++) {
+              if (pointLoads[p].positionFt >= load.startFt && pointLoads[p].positionFt <= load.endFt) {
+                var pointGapX = xCoordinate(pointLoads[p].positionFt);
+                gaps.push({
+                  start: Math.max(loadStart, pointGapX - 8),
+                  end: Math.min(loadEnd, pointGapX + 8)
+                });
+              }
+            }
+            gaps.sort(function (a, b) { return a.start - b.start; });
+            var segmentStart = loadStart;
+            for (var g = 0; g < gaps.length; g++) {
+              if (gaps[g].start > segmentStart) {
+                svg += '<line class="load-line" x1="' + segmentStart + '" y1="' + topY + '" x2="' + gaps[g].start + '" y2="' + topY + '"></line>';
+              }
+              segmentStart = Math.max(segmentStart, gaps[g].end);
+            }
+            if (segmentStart < loadEnd) {
+              svg += '<line class="load-line" x1="' + segmentStart + '" y1="' + topY + '" x2="' + loadEnd + '" y2="' + topY + '"></line>';
+            }
+            for (var j = 0; j <= arrowCount; j++) {
+              var arrowX = loadStart + (loadEnd - loadStart) * j / arrowCount;
+              var conflictsWithPoint = false;
+              for (p = 0; p < pointLoads.length; p++) {
+                if (Math.abs(arrowX - xCoordinate(pointLoads[p].positionFt)) < 10) {
+                  conflictsWithPoint = true;
+                  break;
+                }
+              }
+              if (!conflictsWithPoint) {
+                svg += '<line class="load-line" x1="' + arrowX + '" y1="' + topY + '" x2="' + arrowX + '" y2="' + arrowY + '" marker-end="url(#load-arrow)"></line>';
+              }
+            }
+            svg += '<text class="load-label" text-anchor="middle" x="' + ((loadStart + loadEnd) / 2) + '" y="43">w ' + formatNumber(load.loadKipPerFt, 2) + ' kip/ft</text>';
+          }
+          svg += '<text class="axis-label" text-anchor="middle" x="' + (xStart + beamWidth / 2) + '" y="165">Span ' + formatNumber(spanFt, 2) + ' ft</text></svg></figure>';
+          return svg;
+        }
+
+        function createCheck(title, detail, statusText, statusClass) {
+          return '<div class="check"><h3>' + escapeHtml(title) + '</h3><p>' + detail +
+            '</p><span class="check-status ' + statusClass + '">' + escapeHtml(statusText) + '</span></div>';
+        }
+
+        function renderResults(input, result) {
+          var section = input.section;
+          var stressKsi = result.maxMomentAbsKipFt * 12 / section.SxIn3;
+          var deflectionLimitIn = input.config.spanFt * 12 / input.deflectionDivisor;
+          var stressDetail = 'Peak elastic bending stress = ' + formatNumber(stressKsi, 2) +
+            ' ksi (|M|/Sx). This is not a code capacity check.';
+          var stressStatus;
+          var stressClass;
+          if (input.allowableStressKsi === null) {
+            stressStatus = 'Not compared - enter an allowable';
+            stressClass = 'pending';
+            stressDetail += ' No allowable stress was entered.';
+          } else if (stressKsi <= input.allowableStressKsi) {
+            stressStatus = 'Below entered limit';
+            stressClass = 'pass';
+            stressDetail += ' Entered limit: ' + formatNumber(input.allowableStressKsi, 2) + ' ksi.';
+          } else {
+            stressStatus = 'Above entered limit';
+            stressClass = 'fail';
+            stressDetail += ' Entered limit: ' + formatNumber(input.allowableStressKsi, 2) + ' ksi.';
+          }
+
+          var deflectionStatus = result.maxDeflectionAbsIn <= deflectionLimitIn ? 'Within selected limit' : 'Exceeds selected limit';
+          var deflectionClass = result.maxDeflectionAbsIn <= deflectionLimitIn ? 'pass' : 'fail';
+          var deflectionDetail = 'Peak absolute deflection = ' + formatNumber(result.maxDeflectionAbsIn, 3) +
+            ' in; selected L/' + formatNumber(input.deflectionDivisor, 0) + ' limit = ' +
+            formatNumber(deflectionLimitIn, 3) + ' in. This limit is application-dependent.';
+
+          var supportText = 'Left reaction: ' + formatNumber(result.leftReactionKip, 2) + ' kip';
+          if (input.config.supportType === "simply-supported") {
+            supportText += ' upward-positive reaction; right reaction: ' +
+              formatNumber(result.rightReactionKip, 2) + ' kip';
+          } else {
+            supportText += ' upward-positive reaction; fixed-end reaction moment: ' +
+              formatNumber(result.fixedEndReactionMomentKipFt, 2) + ' kip-ft';
+          }
+          document.getElementById("result-summary").textContent =
+            formatNumber(input.config.spanFt, 2) + ' ft ' +
+            (input.config.supportType === "cantilever" ? 'cantilever' : 'simply supported beam') +
+            ' using ' + section.displayName + '.';
+
+          var html = '<div class="metrics">' +
+            '<div class="metric"><span>Support reactions</span><strong>' + formatNumber(result.leftReactionKip, 2) +
+            ' / ' + formatNumber(result.rightReactionKip, 2) + ' kip</strong><small>' + escapeHtml(supportText) + '</small></div>' +
+            '<div class="metric"><span>Peak shear (absolute)</span><strong>' + formatNumber(result.maxShearAbsKip, 2) +
+            ' kip</strong><small>At x = ' + formatNumber(result.maxShearLocationFt, 2) + ' ft</small></div>' +
+            '<div class="metric"><span>Peak moment (absolute)</span><strong>' + formatNumber(result.maxMomentAbsKipFt, 2) +
+            ' kip-ft</strong><small>At x = ' + formatNumber(result.maxMomentLocationFt, 2) + ' ft; signed peak ' +
+            formatNumber(result.maxMomentValueKipFt, 2) + ' kip-ft</small></div></div>' +
+            '<div class="check-grid">' +
+            createCheck('Preliminary bending stress', stressDetail, stressStatus, stressClass) +
+            createCheck('Deflection screen', deflectionDetail, deflectionStatus, deflectionClass) +
+            '</div>' +
+            makeBeamDiagram(input.config.spanFt, input.config.supportType, input.pointLoads, input.distributedLoads) +
+            makePlot('Shear diagram (positive upward)', result.shearDiagram, 'kip', false) +
+            makePlot('Moment diagram (positive sagging)', result.momentDiagram, 'kip-ft', false) +
+            makePlot('Deflection diagram (positive downward)', result.deflectionDiagram, 'in', true);
+          resultsContent.innerHTML = html;
+        }
+
+        function analyzeForm() {
+          errorMessage.textContent = "";
+          try {
+            var input = readAnalysisInput();
+            var result = calculateBeam(input.config);
+            renderResults(input, result);
+          } catch (error) {
+            errorMessage.textContent = error.message;
+          }
+        }
+
+        function initialize() {
+          fetch("01_data/w_shapes.json")
+            .then(function (response) {
+              if (!response.ok) {
+                throw new Error("The section data request failed with status " + response.status + ".");
+              }
+              return response.json();
+            })
+            .then(function (loadedDataset) {
+              if (!loadedDataset || loadedDataset.dataStatus !== "synthetic-placeholder" ||
+                  !loadedDataset.material || !loadedDataset.sections || loadedDataset.sections.length === 0) {
+                throw new Error("The section data file is missing required prototype data.");
+              }
+              dataset = loadedDataset;
+              var select = document.getElementById("section-id");
+              select.innerHTML = "";
+              for (var i = 0; i < dataset.sections.length; i++) {
+                var section = dataset.sections[i];
+                var option = document.createElement("option");
+                option.value = section.id;
+                option.textContent = section.displayName;
+                select.appendChild(option);
+              }
+              select.disabled = false;
+              var currentSection = selectedSection();
+              document.getElementById("section-properties").textContent =
+                'Synthetic placeholders: W = ' + currentSection.weightLbFt + ' lb/ft; d = ' +
+                currentSection.depthIn + ' in; bf = ' + currentSection.flangeWidthIn +
+                ' in; tw = ' + currentSection.webThicknessIn + ' in; tf = ' +
+                currentSection.flangeThicknessIn + ' in; Ix = ' + currentSection.IxIn4 +
+                ' in^4; Sx = ' + currentSection.SxIn3 + ' in^3.';
+              document.getElementById("material-properties").textContent =
+                'Demo material assumptions: ' + dataset.material.designation + ', Fy = ' +
+                dataset.material.yieldStrengthKsi + ' ksi, E = ' +
+                dataset.material.elasticModulusKsi + ' ksi. Self-weight excluded.';
+              document.getElementById("analyze-button").disabled = false;
+              document.getElementById("dataset-note").textContent = dataset.notice;
+              uniformLoadRows.push({ id: nextLoadId++, startFt: 0, endFt: 20, loadKipPerFt: 1 });
+              renderLoadRows();
+              analyzeForm();
+            })
+            ["catch"](function (error) {
+              document.getElementById("error-message").textContent =
+                'Unable to load beam data. Run the app from a local web server or GitHub Pages. Details: ' + error.message;
+            });
+        }
+
+        document.getElementById("add-point-load").addEventListener("click", function () {
+          addLoadRow("point");
+        });
+        document.getElementById("add-uniform-load").addEventListener("click", function () {
+          addLoadRow("uniform");
+        });
+        document.getElementById("analysis-form").addEventListener("submit", function (event) {
+          event.preventDefault();
+          analyzeForm();
+        });
+        var spanInput = document.getElementById("span-ft");
+        spanInput.addEventListener("input", function () {
+          var spanFt = Number(spanInput.value);
+          document.getElementById("span-readout").textContent = formatNumber(spanFt, 1) + " ft";
+          updatePositionSliderLimits(spanFt);
+        });
+        pointLoadContainer.addEventListener("input", function (event) {
+          if (event.target.type === "range") {
+            refreshLoadReadout(event.target);
+            syncLoadRowsFromDOM();
+          }
+        });
+        uniformLoadContainer.addEventListener("input", function (event) {
+          if (event.target.type === "range") {
+            refreshLoadReadout(event.target);
+            syncLoadRowsFromDOM();
+          }
+        });
+        pointLoadContainer.addEventListener("click", function (event) {
+          if (event.target.classList.contains("remove-load")) {
+            syncLoadRowsFromDOM();
+            var row = event.target.closest(".load-row");
+            var id = Number(row.getAttribute("data-load-id"));
+            pointLoadRows = pointLoadRows.filter(function (load) { return load.id !== id; });
+            renderLoadRows();
+          }
+        });
+        uniformLoadContainer.addEventListener("click", function (event) {
+          if (event.target.classList.contains("remove-load")) {
+            syncLoadRowsFromDOM();
+            var row = event.target.closest(".load-row");
+            var id = Number(row.getAttribute("data-load-id"));
+            uniformLoadRows = uniformLoadRows.filter(function (load) { return load.id !== id; });
+            renderLoadRows();
+          }
+        });
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initialize);
+        } else {
+          initialize();
+        }
+      }());
+    </script>
+  </body>
+</html>
