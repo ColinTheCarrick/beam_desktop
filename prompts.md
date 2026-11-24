@@ -39,3 +39,9 @@
 - Asked: Add the newly specified initial-scope feature to the app.
 - Changed: Added a File menu with Open, Save, and Save As for versioned JSON beam designs, preserving support, span, section, deflection limit, allowable stress, and all point and uniform loads. Validated files before applying them, protected existing files on failed saves, and retained the new specification. The spec already had no out-of-scope entry for saving designs.
 - Worked: Yes. GUI checks passed for saving, reopening and overwriting designs, multiple signed loads, optional allowable stress, invalid input and malformed files; failed operations left the existing design or file intact.
+
+## Request
+
+- Asked: Adjust the app's scroll sensitivity to the settings of the system running it.
+- Changed: Both scrollable panels now use the current Windows wheel setting, including page scrolling and disabled wheel scrolling, and accumulate partial wheel movements. Added macOS wheel handling and X11 wheel button support.
+- Worked: Yes on Windows. GUI checks verified one and three lines, page mode, disabled scrolling, and partial deltas in both panels. macOS and X11 handling was not tested on those platforms; X11 uses a three-line step per wheel event.

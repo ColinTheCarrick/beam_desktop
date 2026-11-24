@@ -7,6 +7,16 @@ from pathlib import Path
 from design_file import read_design, write_design
 
 
+def windows_wheel_lines():
+    """Read Windows' current wheel setting; 0xffffffff means one page."""
+    import ctypes
+    from ctypes import wintypes
+    lines = wintypes.UINT()
+    if ctypes.windll.user32.SystemParametersInfoW(0x0068, 0, ctypes.byref(lines), 0):
+        return lines.value
+    return 3
+
+
 class BeamUI(tk.Tk):
     def __init__(self, calculate, sections, themes):
         # Establish DPI awareness before creating Tk, including screenshot tools.
@@ -29,6 +39,7 @@ class BeamUI(tk.Tk):
         self.divisor = tk.StringVar(value="360")
         self.theme = tk.StringVar(value="Light")
         self.points, self.uniforms, self.sliders = [], [], []
+        self.wheel_remainders = {}
         self.current_file = None
         self.pending = None
         self.build()
@@ -103,6 +114,9 @@ class BeamUI(tk.Tk):
         footer = ttk.Label(self, text="Strong-axis bending · Demo A992: Fy = 50 ksi, E = 29,000 ksi · Self-weight excluded", style="Muted.TLabel", padding=(24, 10))
         footer.pack(fill="x")
         self.bind_all("<MouseWheel>", self.mousewheel)
+        if self.tk.call("tk", "windowingsystem") == "x11":
+            self.bind_all("<Button-4>", self.mousewheel)
+            self.bind_all("<Button-5>", self.mousewheel)
 
     def design_data(self):
         allowable = float(self.allow.get()) if self.allow.get().strip() else None
@@ -166,7 +180,8 @@ class BeamUI(tk.Tk):
 
     def scroll_panel(self, body, width):
         panel = ttk.Frame(body, style="Card.TFrame")
-        canvas = tk.Canvas(panel, width=int(width*self.ui_scale), highlightthickness=0)
+        canvas = tk.Canvas(panel, width=int(width*self.ui_scale), highlightthickness=0,
+                           yscrollincrement=max(1, int(20*self.ui_scale)))
         bar = ttk.Scrollbar(panel, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=bar.set)
         bar.pack(side="right", fill="y")
@@ -205,12 +220,34 @@ class BeamUI(tk.Tk):
         widget = self.winfo_containing(event.x_root, event.y_root)
         while widget:
             if widget in (self.formcanvas, self.form):
-                self.formcanvas.yview_scroll(-int(event.delta/120), "units")
-                return "break"
-            if widget in (self.resultcanvas, self.results):
-                self.resultcanvas.yview_scroll(-int(event.delta/120), "units")
-                return "break"
+                canvas = self.formcanvas
+                break
+            elif widget in (self.resultcanvas, self.results):
+                canvas = self.resultcanvas
+                break
             widget = getattr(widget, "master", None)
+        else:
+            return
+        window_system = self.tk.call("tk", "windowingsystem")
+        if window_system == "win32":
+            lines = windows_wheel_lines()
+            if not lines:
+                return "break"
+            mode = "pages" if lines == 0xffffffff else "units"
+            amount = -event.delta / 120 * (1 if mode == "pages" else lines)
+        elif window_system == "aqua":
+            mode, amount = "units", -event.delta
+        else:
+            # X11 emits one button event per step; the desktop controls their rate.
+            mode = "units"
+            amount = -3 if event.num == 4 else 3 if event.num == 5 else -3*event.delta/120
+        key = (canvas, mode)
+        amount += self.wheel_remainders.get(key, 0)
+        whole = math.trunc(amount)
+        self.wheel_remainders[key] = amount - whole
+        if whole:
+            canvas.yview_scroll(whole, mode)
+        return "break"
 
     def label(self, parent, text, style="Card.TLabel", **kw):
         label = ttk.Label(parent, text=text, style=style, **kw)
