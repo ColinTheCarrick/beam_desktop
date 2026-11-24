@@ -33,3 +33,9 @@
 - Asked: Adjust the desktop app frame to fit within the screen.
 - Changed: Sized and centered the window within the desktop work area, including window borders and the taskbar. Added tabs for inputs and results at narrow widths, retained scrollable panels, and ignored generated Python bytecode.
 - Worked: Yes. Checked actual Windows window bounds against the work area, compact and wide layouts, tab switching, scrolling at minimum size, and theme changes. Long content remains scrollable.
+
+## Request
+
+- Asked: Add the newly specified initial-scope feature to the app.
+- Changed: Added a File menu with Open, Save, and Save As for versioned JSON beam designs, preserving support, span, section, deflection limit, allowable stress, and all point and uniform loads. Validated files before applying them, protected existing files on failed saves, and retained the new specification. The spec already had no out-of-scope entry for saving designs.
+- Worked: Yes. GUI checks passed for saving, reopening and overwriting designs, multiple signed loads, optional allowable stress, invalid input and malformed files; failed operations left the existing design or file intact.

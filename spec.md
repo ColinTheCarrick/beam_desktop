@@ -23,6 +23,7 @@ and limitations; they are not a complete code-compliant beam design.
   labeled as synthetic and unsuitable for real design. Add lumber in a later
   phase after its size, species, grade, and property data are defined.
 - Continuous beams and buckling checks are out of scope for the initial release.
+- Save and Open: A File menu with Save and Open that saves the beam (support type, span, section, deflection limit, and loads) to a file and opens it again. Remove "Saving designs" from the Out of scope section of the spec first.
 
 ## Inputs and assumptions
 - Support type and span, entered in feet.

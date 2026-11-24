@@ -1,7 +1,10 @@
 """Tkinter presentation for the Beam Designer prototype."""
 import math
 import tkinter as tk
-from tkinter import ttk
+from tkinter import filedialog, messagebox, ttk
+from pathlib import Path
+
+from design_file import read_design, write_design
 
 
 class BeamUI(tk.Tk):
@@ -26,6 +29,7 @@ class BeamUI(tk.Tk):
         self.divisor = tk.StringVar(value="360")
         self.theme = tk.StringVar(value="Light")
         self.points, self.uniforms, self.sliders = [], [], []
+        self.current_file = None
         self.pending = None
         self.build()
         self.add_load("uniform", [1, 0, 20])
@@ -56,6 +60,15 @@ class BeamUI(tk.Tk):
         self.geometry(f"{width}x{height}+{x}+{y}")
 
     def build(self):
+        self.menubar = tk.Menu(self)
+        self.file_menu = tk.Menu(self.menubar, tearoff=False)
+        self.file_menu.add_command(label="Open…", command=self.open_file, accelerator="Ctrl+O")
+        self.file_menu.add_command(label="Save", command=self.save_file, accelerator="Ctrl+S")
+        self.file_menu.add_command(label="Save As…", command=self.save_as)
+        self.menubar.add_cascade(label="File", menu=self.file_menu)
+        self.configure(menu=self.menubar)
+        self.bind("<Control-o>", lambda event: self.open_file())
+        self.bind("<Control-s>", lambda event: self.save_file())
         header = ttk.Frame(self, padding=(24, 18, 24, 12))
         header.pack(fill="x")
         title = ttk.Frame(header)
@@ -90,6 +103,66 @@ class BeamUI(tk.Tk):
         footer = ttk.Label(self, text="Strong-axis bending · Demo A992: Fy = 50 ksi, E = 29,000 ksi · Self-weight excluded", style="Muted.TLabel", padding=(24, 10))
         footer.pack(fill="x")
         self.bind_all("<MouseWheel>", self.mousewheel)
+
+    def design_data(self):
+        allowable = float(self.allow.get()) if self.allow.get().strip() else None
+        return {
+            "version": 1, "support": self.support.get(), "span_ft": self.span.get(),
+            "section": self.section.get(), "deflection_divisor": float(self.divisor.get()),
+            "allowable_stress_ksi": allowable,
+            "point_loads": [dict(magnitude_kip=v[0].get(), position_ft=v[1].get())
+                            for v in (item["variables"] for item in self.points)],
+            "uniform_loads": [dict(magnitude_kip_per_ft=v[0].get(), start_ft=v[1].get(), end_ft=v[2].get())
+                              for v in (item["variables"] for item in self.uniforms)],
+        }
+
+    def save_file(self):
+        if self.current_file is None:
+            return self.save_as()
+        return self.write_file(self.current_file)
+
+    def save_as(self):
+        path = filedialog.asksaveasfilename(parent=self, title="Save beam design",
+                                           defaultextension=".json",
+                                           filetypes=[("Beam design", "*.json"), ("All files", "*.*")])
+        if path:
+            return self.write_file(path)
+
+    def write_file(self, path):
+        try:
+            write_design(path, self.design_data(), self.sections)
+        except (OSError, ValueError, tk.TclError) as exc:
+            messagebox.showerror("Could not save design", str(exc), parent=self)
+            return False
+        self.current_file = path
+        self.title(f"Beam Designer — {Path(path).name}")
+        return True
+
+    def open_file(self):
+        path = filedialog.askopenfilename(parent=self, title="Open beam design",
+                                          filetypes=[("Beam design", "*.json"), ("All files", "*.*")])
+        if not path:
+            return
+        try:
+            design = read_design(path, self.sections)
+        except (OSError, ValueError, UnicodeError) as exc:
+            messagebox.showerror("Could not open design", str(exc), parent=self)
+            return
+        self.support.set(design["support"])
+        self.span.set(design["span_ft"])
+        self.section.set(design["section"])
+        self.divisor.set(str(design["deflection_divisor"]))
+        self.allow.set("" if design["allowable_stress_ksi"] is None else str(design["allowable_stress_ksi"]))
+        for store in (self.points, self.uniforms):
+            for item in store[:]:
+                self.remove_load(store, item)
+        for values in design["point_loads"]:
+            self.add_load("point", values)
+        for values in design["uniform_loads"]:
+            self.add_load("uniform", values)
+        self.current_file = path
+        self.title(f"Beam Designer — {Path(path).name}")
+        self.schedule()
 
     def scroll_panel(self, body, width):
         panel = ttk.Frame(body, style="Card.TFrame")
@@ -378,6 +451,10 @@ class BeamUI(tk.Tk):
             "Forest": ("#fff5e7", "#684128"),
         }[self.theme.get()]
         self.configure(background=bg)
+        self.menubar.configure(background=surface, foreground=text, activebackground=accent,
+                               activeforeground=bg if dark else "#ffffff")
+        self.file_menu.configure(background=surface, foreground=text, activebackground=accent,
+                                 activeforeground=bg if dark else "#ffffff")
         s = self.style
         s.configure(".", background=surface, foreground=text, font=("Segoe UI", 10), bordercolor=p['border'], lightcolor=p['border'], darkcolor=p['border'], troughcolor=bg, focuscolor=accent)
         s.configure("TFrame", background=bg)
