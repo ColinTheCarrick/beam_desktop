@@ -45,3 +45,9 @@
 - Asked: Adjust the app's scroll sensitivity to the settings of the system running it.
 - Changed: Both scrollable panels now use the current Windows wheel setting, including page scrolling and disabled wheel scrolling, and accumulate partial wheel movements. Added macOS wheel handling and X11 wheel button support.
 - Worked: Yes on Windows. GUI checks verified one and three lines, page mode, disabled scrolling, and partial deltas in both panels. macOS and X11 handling was not tested on those platforms; X11 uses a three-line step per wheel event.
+
+## Request
+
+- Asked: Add the newly specified initial-scope feature to the app.
+- Changed: Recorded this request; no application changes were made because the saved `spec.md` matched the committed version and contained no new requirement.
+- Worked: Pending the saved edit or text of the new requirement.
