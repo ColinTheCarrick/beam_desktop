@@ -81,3 +81,9 @@
 - Asked: Rerun the validation cases in `spec.md` and confirm they still pass.
 - Changed: No application code changed. Reran the 20 ft simply supported uniform-load reference and the additional simply supported midpoint point-load, cantilever uniform-load, and cantilever tip point-load cases using the app's calculation function.
 - Worked: Yes. All four cases passed reaction and force/moment equilibrium checks, peak results, and comparisons of all 601 diagram samples with closed-form solutions. The specified case produced 50.000 kip-ft and 0.608517 in (0.609 in rounded); the greatest deflection difference across all cases was 0.00000541 in.
+
+## Request
+
+- Asked: Write a short README describing the app, required packages, and startup command.
+- Changed: Updated `README.md` with the app's purpose, prototype limitations, Tkinter and matplotlib requirements, installation command, and startup command.
+- Worked: Yes. Checked the documentation against the app and `requirements.txt`.
