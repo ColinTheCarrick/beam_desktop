@@ -82,25 +82,24 @@ class BeamUI(tk.Tk):
         self.configure(menu=self.menubar)
         self.bind("<Control-o>", lambda event: self.open_file())
         self.bind("<Control-s>", lambda event: self.save_file())
-        header = ttk.Frame(self, padding=(24, 18, 24, 12))
+        header = ttk.Frame(self, padding=(24, 8, 24, 6))
         header.pack(fill="x")
-        title = ttk.Frame(header)
-        title.pack(side="left")
-        ttk.Label(title, text="BEAM ANALYSIS PROTOTYPE", style="Muted.TLabel").pack(anchor="w")
-        ttk.Label(title, text="Beam Designer", style="Title.TLabel").pack(anchor="w")
-        ttk.Label(title, text="Reactions, internal diagrams, and preliminary stress / deflection screens.", style="Muted.TLabel").pack(anchor="w")
         actions = ttk.Frame(header)
-        actions.pack(side="right", padx=(16, 0))
-        ttk.Label(actions, text="Color scheme").pack(anchor="w", pady=(0, 4))
+        actions.pack(side="right", padx=(12, 0))
+        ttk.Label(actions, text="Color scheme").pack(side="left", padx=(0, 6))
         self.picker = ttk.Combobox(actions, textvariable=self.theme, values=list(self.themes), state="readonly", width=16)
-        self.picker.pack(fill="x")
+        self.picker.pack(side="left")
         self.picker.bind("<<ComboboxSelected>>", lambda e: self.theme_changed())
-        ttk.Label(actions, text="Prototype · synthetic data", style="Badge.TLabel", padding=(8, 4)).pack(pady=(6, 0))
+        ttk.Label(header, text="Beam Designer", style="Title.TLabel").pack(side="left")
 
-        self.warning = tk.Label(self, anchor="w", justify="left", padx=14, pady=10,
-            text="NOT FOR REAL DESIGN OR CONSTRUCTION\nSynthetic section properties are unsuitable for real design. These preliminary screens do not check code compliance, buckling, shear capacity, bearing, or load combinations.")
-        self.warning.pack(fill="x", padx=24, pady=(0, 14))
-        self.warning.bind("<Configure>", lambda e: self.warning.configure(wraplength=max(100, e.width-30)))
+        self.warning = ttk.Frame(self, style="Warning.TFrame", padding=(10, 4))
+        self.warning.pack(fill="x", padx=24, pady=(0, 8))
+        self.warning_toggle = ttk.Button(self.warning, text="Details", style="Warning.TButton", command=self.toggle_warning)
+        self.warning_toggle.pack(side="right", padx=(8, 0))
+        self.warning_text = ttk.Label(self.warning, text="SYNTHETIC PROTOTYPE DATA — NOT FOR REAL DESIGN OR CONSTRUCTION", style="Warning.TLabel")
+        self.warning_text.pack(side="top", fill="x", anchor="w")
+        self.warning_details = ttk.Label(self.warning, text="Section properties are synthetic and unsuitable for real design. These preliminary screens do not check code compliance, buckling, shear capacity, bearing, or load combinations.", style="Warning.TLabel", justify="left")
+        self.warning_details.bind("<Configure>", lambda e: self.warning_details.configure(wraplength=max(50, e.width-4)))
         body = ttk.Frame(self)
         body.pack(fill="both", expand=True, padx=24)
         self.body = body
@@ -119,6 +118,14 @@ class BeamUI(tk.Tk):
         if self.tk.call("tk", "windowingsystem") == "x11":
             self.bind_all("<Button-4>", self.mousewheel)
             self.bind_all("<Button-5>", self.mousewheel)
+
+    def toggle_warning(self):
+        if self.warning_details.winfo_manager():
+            self.warning_details.pack_forget()
+            self.warning_toggle.configure(text="Details")
+        else:
+            self.warning_details.pack(side="top", fill="x", anchor="w", pady=(4, 0))
+            self.warning_toggle.configure(text="Hide details")
 
     def design_data(self):
         allowable = float(self.allow.get()) if self.allow.get().strip() else None
@@ -345,14 +352,24 @@ class BeamUI(tk.Tk):
 
     def build_results(self):
         r = self.results
-        self.label(r, "Analysis results", "Heading.TLabel")
-        ttk.Button(r, text="Export results to CSV", command=self.export_csv).pack(anchor="w", pady=(4, 6))
-        ttk.Button(r, text="Save calculation sheet (PDF)", command=self.export_pdf).pack(anchor="w", pady=(0, 6))
+        self.result_toolbar = ttk.Frame(r, style="Card.TFrame")
+        self.result_toolbar.pack(fill="x", pady=(0, 4))
+        self.result_heading = ttk.Label(self.result_toolbar, text="Analysis results", style="Heading.TLabel")
+        self.export_button = ttk.Button(self.result_toolbar, text="Export CSV", command=self.export_csv)
+        self.pdf_button = ttk.Button(self.result_toolbar, text="Save PDF", command=self.export_pdf)
+        self.result_toolbar.columnconfigure(0, weight=1)
+        self.toolbar_layout = None
         self.summary = self.label(r, "", "MutedCard.TLabel")
         self.label(r, "Self-weight excluded · All entered loads used for stress and deflection", "Hint.TLabel")
-        self.metrics = [self.label(r, "", "Metric.TLabel", padding=(12, 9)) for _ in range(3)]
-        self.stress = self.label(r, "", "Check.TLabel", padding=(12, 10))
-        self.deflection = self.label(r, "", "Check.TLabel", padding=(12, 10))
+        self.metric_grid = ttk.Frame(r, style="Card.TFrame")
+        self.metric_grid.pack(fill="x", pady=(4, 0))
+        self.metrics = [self.result_card(self.metric_grid, "Metric.TLabel") for _ in range(3)]
+        self.check_grid = ttk.Frame(r, style="Card.TFrame")
+        self.check_grid.pack(fill="x", pady=(4, 0))
+        self.stress = self.result_card(self.check_grid, "Check.TLabel")
+        self.deflection = self.result_card(self.check_grid, "Check.TLabel")
+        self.cards_layout = None
+        self.results.bind("<Configure>", self.layout_results, add="+")
         self.label(r, "Preliminary stress and deflection screens only. Buckling and overall member adequacy are not checked.", "Hint.TLabel")
         self.diagrams = []
         for title in ("Beam and applied loads (+ downward)", "Shear diagram (positive upward)", "Moment diagram (positive sagging)", "Deflection diagram (positive downward)"):
@@ -360,6 +377,35 @@ class BeamUI(tk.Tk):
             c = tk.Canvas(r, height=int(180*self.ui_scale), highlightthickness=1)
             c.pack(fill="x", pady=(0, 10))
             self.diagrams.append(c)
+
+    def result_card(self, parent, style):
+        card = ttk.Label(parent, text="", style=style, padding=(10, 7), anchor="nw", justify="left", width=1)
+        card.bind("<Configure>", lambda e: card.configure(wraplength=max(50, e.width-int(24*self.ui_scale))))
+        return card
+
+    def layout_results(self, event):
+        width = event.width / self.ui_scale
+        toolbar = "wide" if width >= 510 else "narrow"
+        if toolbar != self.toolbar_layout:
+            for widget in (self.result_heading, self.export_button, self.pdf_button):
+                widget.grid_forget()
+            self.result_heading.grid(row=0, column=0, sticky="w", pady=3)
+            if toolbar == "wide":
+                self.export_button.grid(row=0, column=1, padx=(6, 0))
+                self.pdf_button.grid(row=0, column=2, padx=(6, 0))
+            else:
+                self.export_button.grid(row=1, column=0, sticky="w", pady=(3, 0))
+                self.pdf_button.grid(row=1, column=1, sticky="w", padx=(6, 0), pady=(3, 0))
+            self.toolbar_layout = toolbar
+        layout = (3 if width >= 600 else 1, 2 if width >= 500 else 1)
+        if layout != self.cards_layout:
+            for frame, cards, columns in ((self.metric_grid, self.metrics, layout[0]),
+                                           (self.check_grid, [self.stress, self.deflection], layout[1])):
+                for column in range(3):
+                    frame.columnconfigure(column, weight=1 if column < columns else 0, uniform="cards" if column < columns else "")
+                for index, card in enumerate(cards):
+                    card.grid(row=index//columns, column=index%columns, sticky="nsew", padx=(0, 4), pady=(0, 4))
+            self.cards_layout = layout
 
     def resize_results(self, event):
         self.schedule()
@@ -535,7 +581,7 @@ class BeamUI(tk.Tk):
         s.configure("TLabel", background=bg, foreground=text)
         for name in ("Card", "Heading", "Hint", "MutedCard", "Readout", "DiagramTitle"):
             s.configure(name+".TLabel", background=surface, foreground=text)
-        s.configure("Title.TLabel", font=("Segoe UI", 26, "bold"))
+        s.configure("Title.TLabel", font=("Segoe UI", 19, "bold"))
         for name in ("Heading", "DiagramTitle"):
             s.configure(name+".TLabel", font=("Segoe UI", 12, "bold"))
         for name in ("Muted", "Hint", "MutedCard"):
@@ -543,8 +589,12 @@ class BeamUI(tk.Tk):
         s.configure("Readout.TLabel", foreground=accent, font=("Segoe UI", 10, "bold"))
         for name in ("Notice", "Badge", "Error"):
             s.configure(name+".TLabel", background=p['notice'], foreground=p['notice_text'])
-        s.configure("Metric.TLabel", background=bg, foreground=text, font=("Segoe UI", 11, "bold"))
+        s.configure("Metric.TLabel", background=bg, foreground=text, font=("Segoe UI", 10, "bold"))
         s.configure("Check.TLabel", background=bg, foreground=text, font=("Segoe UI", 10))
+        s.configure("Warning.TFrame", background=p['notice'])
+        s.configure("Warning.TLabel", background=p['notice'], foreground=p['notice_text'], font=("Segoe UI", 9))
+        s.configure("Warning.TButton", background=p['notice'], foreground=p['notice_text'], padding=(6, 2))
+        s.map("Warning.TButton", background=[("active", surface), ("pressed", surface)])
         s.configure("TButton", background=surface, foreground=text, padding=(10, 6))
         s.map("TButton", background=[("active", bg), ("pressed", bg)], foreground=[("disabled", p['muted'])])
         s.configure("Accent.TButton", background=accent, foreground=bg if dark else "#ffffff")
@@ -573,7 +623,6 @@ class BeamUI(tk.Tk):
                              "-selectbackground", accent, "-selectforeground", bg if dark else "#ffffff")
             for child in widget.winfo_children(): update_popdowns(child)
         update_popdowns(self)
-        self.warning.configure(background=p['notice'], foreground=p['notice_text'])
         for c in (self.formcanvas, self.resultcanvas, *self.diagrams):
             c.configure(background=surface, highlightbackground=p['border'])
         self.schedule()

@@ -69,3 +69,9 @@
 - Asked: What can be improved about the app layout, and what are the recommendations?
 - Changed: Reviewed the specification and inspected the running app at wide and compact window sizes, including the diagrams. Recorded recommendations in the response; no application layout changes were made.
 - Worked: Yes. Identified improvements for screen space, result hierarchy, navigation, input controls, load editing, and diagram readability.
+
+## Request
+
+- Asked: Make the two recommended adjustments to the results summary and header, then stop.
+- Changed: Arranged result metrics and checks in compact responsive rows, placed CSV and PDF actions beside the results heading, and shortened the header while retaining a visible synthetic-data warning with expandable limitations.
+- Worked: Yes. Reviewed wide and compact screenshots, checked all six themes, responsive layouts, warning details, CSV/PDF buttons, reactions, and invalid input handling.
